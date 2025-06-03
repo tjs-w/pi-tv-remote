@@ -1,3 +1,8 @@
+<!-- RPi Logo -->
+<p align="center">
+  <img src="https://www.raspberrypi.org/app/uploads/2018/03/RPi-Logo-Reg-SCREEN.png" alt="Raspberry Pi Logo" width="120"/>
+</p>
+
 # Pi TV Remote
 
 A Python module to interface your Raspberry Pi application (connected to a TV) with the TV remote via HDMI-CEC. This library allows your RPi app to receive and send remote control commands, enabling seamless integration of TV remote control into your own projects. A command-line interface (CLI) is also available for running the adapter and seeing button events.
@@ -146,13 +151,9 @@ pi_tv_remote/             # Main package directory
 ├── cec_adapter.py        # Core CEC adapter implementation
 ├── cec_utils.py          # Utility functions for CEC
 ├── cli.py                # Command-line interface
-└── tests/                # Testing directory
-    ├── test_tools/       # Testing utilities (run_tests.sh, deploy_and_test_on_pi.sh)
-    ├── run_tests.sh      # Test runner script (symlink to test_tools)
-    ├── deploy_and_test_on_pi.sh  # Deployment script (symlink to test_tools)
-    ├── test_cec_adapter_real_tv.py  # Tests with real TV
-    └── test_remote_listener.py   # Remote button listener tests
 ```
+
+> **Note:** All functional test and test utility files (the `tests/` directory and `test_tools/`) have been removed from the codebase. For testing, refer to previous releases or your own test setup.
 
 ## Development
 
