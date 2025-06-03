@@ -3,27 +3,47 @@
   <img src="https://www.raspberrypi.org/app/uploads/2018/03/RPi-Logo-Reg-SCREEN.png" alt="Raspberry Pi Logo" width="120"/>
 </p>
 
-# Pi TV Remote
+<h1 align="center">Pi TV Remote</h1>
 
-A Python module to interface your Raspberry Pi application (connected to a TV) with the TV remote via HDMI-CEC. This library allows your RPi app to receive and send remote control commands, enabling seamless integration of TV remote control into your own projects. A command-line interface (CLI) is also available for running the adapter and seeing button events.
+<p align="center">
+  <img src="https://img.shields.io/badge/raspberry%20pi-compatible-c51a4a" alt="Raspberry Pi Compatible"/>
+  <img src="https://img.shields.io/badge/hdmi--cec-enabled-3e9bcd" alt="HDMI-CEC Enabled"/>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"/>
+  <img src="https://img.shields.io/badge/python-3.7%2B-blue" alt="Python 3.7+"/>
+</p>
 
-## Features
+<p align="center">
+  Control your TV from your Raspberry Pi application using the TV's own remote via HDMI-CEC.
+</p>
 
-- Receive button presses from the TV remote in your Python app
-- Send standard TV remote commands (power, volume, navigation) to the TV
-- Simple, extensible Python API for integration into your own RPi projects
-- Command-line interface (CLI) for running the adapter and observing button events
-- Real TV hardware functional testing framework
-- Designed for use on Raspberry Pi with HDMI-CEC enabled TVs
+---
 
-## Requirements
+## 🔍 Overview
+
+Pi TV Remote is a Python module that enables your Raspberry Pi applications to interface with TV remote controls via HDMI-CEC. This library makes it easy to:
+
+- **Receive** button presses from the TV remote in your Python app
+- **Send** standard TV remote commands to control the TV
+- Create seamless integrations between your Pi app and the TV
+
+Perfect for media centers, smart home displays, information kiosks, or any project where you want to control your application with the TV's existing remote.
+
+## ✨ Features
+
+- 📡 **Bi-directional Communication**: Receive and send TV remote commands
+- 🧩 **Simple Python API**: Easy integration into existing Python projects
+- 🖥️ **Command-line Interface**: Test and debug CEC connections quickly
+- 🛠️ **Extensible Design**: Build on top of the core functionality
+- 📺 **TV Control**: Power on/off, volume control, and navigation
+
+## 📋 Requirements
 
 - Raspberry Pi (any model with HDMI port)
 - TV with HDMI-CEC support
-- Python 3.8+
+- Python 3.7+
 - libCEC libraries
 
-## Installation
+## 📦 Installation
 
 ### On Raspberry Pi
 
@@ -40,11 +60,8 @@ cd pi-tv-remote
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install the package in development mode
+# Install the package (will automatically handle dependencies)
 pip install -e .
-
-# Install the CEC Python module
-pip install cec
 ```
 
 ### For Development (macOS/Linux)
@@ -62,11 +79,11 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-## Usage
+## 🚀 Usage
 
-### Command-Line Interface (CLI)
+### Command-Line Interface
 
-You can run the CEC adapter and see button events directly from the command line:
+Test your CEC connection and observe remote control events directly from the command line:
 
 ```bash
 python -m pi_tv_remote.cli --name "MyPi" --duration 60
@@ -74,15 +91,13 @@ python -m pi_tv_remote.cli --name "MyPi" --duration 60
 
 **Options:**
 
-- `--name NAME` &nbsp;&nbsp;&nbsp;&nbsp;Set the OSD name of the device (default: RaspberryPi)
-- `--duration SECONDS` &nbsp;&nbsp;Run for a specified number of seconds (default: run indefinitely)
-- `--help` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show help message and exit
-
-This will print button events and adapter status to the console. Use this for quick diagnostics or to observe remote control events.
+- `--name NAME` - Set the OSD name of the device (default: RaspberryPi)
+- `--duration SECONDS` - Run for a specified number of seconds (default: run indefinitely)
+- `--help` - Show help message and exit
 
 ### Python API
 
-The main API is available via `pi_tv_remote.cec_adapter`:
+Integrate the CEC adapter into your own Python applications:
 
 ```python
 from pi_tv_remote.cec_adapter import CECAdapter, CECConfig, RemoteButton
@@ -94,11 +109,15 @@ config = CECConfig(device_name="MyPi")
 adapter = CECAdapter(config)
 adapter.init()
 
-# Listen for remote button presses in your app
-# (see test_remote_listener.py for a real example)
-
+# Listen for remote button presses
 def on_button_press(key_code, duration):
     print(f"Button {key_code} pressed for {duration}ms")
+    
+    # Example: Map specific buttons to actions
+    if key_code == RemoteButton.UP:
+        print("Up navigation")
+    elif key_code == RemoteButton.SELECT:
+        print("Selected item")
 
 adapter.add_keypress_callback(on_button_press)
 
@@ -108,65 +127,43 @@ adapter.send_remote_button(RemoteButton.VOLUME_UP)
 adapter.standby_tv()
 ```
 
-## Functional Testing with Real TV Hardware
+## 📁 Project Structure
 
-This project includes a comprehensive functional testing framework for the CEC adapter with real TV hardware. **These are functional tests, not unit tests, and require a real Raspberry Pi and TV with HDMI-CEC enabled.**
+```
+pi_tv_remote/         # Main package directory
+├── __init__.py       # Package initialization
+├── cec_adapter.py    # Core CEC adapter implementation
+├── cec_utils.py      # Utility functions for CEC
+└── cli.py            # Command-line interface
+```
+
+## 🛠️ Development
 
 ```bash
-# From the project root
-cd pi_tv_remote/tests
-
-# Run all tests (requires a connected TV)
-./run_tests.sh
-
-# Skip tests that put the TV in standby mode
-./run_tests.sh --skip-standby
-
-# Skip all real TV tests (when no TV is connected)
-./run_tests.sh --no-tv
-```
-
-### Testing on a Raspberry Pi
-
-For testing on a Raspberry Pi with a real TV:
-
-```bash
-# From the tests directory
-./deploy_and_test_on_pi.sh
-
-# Deploy to a specific Raspberry Pi IP address
-./deploy_and_test_on_pi.sh 192.168.1.100
-
-# Install dependencies on the Pi
-./deploy_and_test_on_pi.sh --install-deps
-```
-
-See `pi_tv_remote/tests/README.md` for more detailed testing information and options.
-
-## Project Structure
-
-```
-pi_tv_remote/             # Main package directory
-├── __init__.py           # Package initialization
-├── cec_adapter.py        # Core CEC adapter implementation
-├── cec_utils.py          # Utility functions for CEC
-├── cli.py                # Command-line interface
-```
-
-> **Note:** All functional test and test utility files (the `tests/` directory and `test_tools/`) have been removed from the codebase. For testing, refer to previous releases or your own test setup.
-
-## Development
-
-```bash
-# Run tests (requires real TV hardware)
-cd pi_tv_remote/tests
-./run_tests.sh
-
 # Format code
 black pi_tv_remote
 isort pi_tv_remote
+
+# Run static type checking
+mypy pi_tv_remote
 ```
 
-## License
+## 📝 License
 
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+<p align="center">
+  Built with ❤️ for Raspberry Pi enthusiasts
+</p>
