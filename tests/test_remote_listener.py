@@ -2,6 +2,12 @@
 """
 Remote Control Listener Test
 This pytest module detects button presses from a real TV remote.
+
+IMPORTANT: These are NOT unit tests. These tests require:
+- A Raspberry Pi with CEC support
+- A TV connected via HDMI cable with CEC enabled
+- Proper libcec installation on the Raspberry Pi
+- A compatible TV remote control
 """
 import os
 import signal
@@ -12,34 +18,14 @@ from typing import Dict, List, Optional, Set
 
 import pytest
 
-# Try to import from different locations
-try:
-    from pi_tv_remote.cec_adapter import (
-        CECAdapter,
-        CECCommand,
-        CECConfig,
-        RemoteButton,
-        cec,
-        log_debug,
-    )
-except ImportError:
-    # For direct imports if the package is not installed
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-    try:
-        from pi_tv_remote.cec_adapter import (
-            CECAdapter,
-            CECCommand,
-            CECConfig,
-            RemoteButton,
-            cec,
-            log_debug,
-        )
-    except ImportError:
-        # Fallback for direct import
-        print(
-            "CRITICAL: Unable to import pitvremote.cec_adapter. Ensure PYTHONPATH is set correctly."
-        )
-        raise
+from pi_tv_remote.cec_adapter import (
+    CECAdapter,
+    CECCommand,
+    CECConfig,
+    RemoteButton,
+    cec,
+    log_debug,
+)
 
 # Detected button presses will be stored here
 detected_buttons: Set[int] = set()
@@ -196,6 +182,8 @@ def wait_for_buttons_thread(max_wait_time: int = 60) -> None:
             (RemoteButton.LEFT, "LEFT"),
             (RemoteButton.RIGHT, "RIGHT"),
             (RemoteButton.SELECT, "SELECT"),
+            (RemoteButton.PLAY, "PLAY"),
+            (RemoteButton.PAUSE, "PAUSE"),
         ]
 
         # Define the expected color buttons
@@ -224,6 +212,10 @@ def wait_for_buttons_thread(max_wait_time: int = 60) -> None:
 @pytest.fixture
 def cec_listener():
     """Create and initialize a CEC listener for testing."""
+    # Skip all real TV tests if NO_TV environment variable is set
+    if os.environ.get("NO_TV"):
+        pytest.skip("NO_TV environment variable set, skipping real TV tests")
+
     global detected_buttons, stop_listening, button_event, listener_thread
 
     # Reset detected buttons
@@ -436,9 +428,14 @@ def test_detect_remote_buttons(cec_listener, request):
 
 if __name__ == "__main__":
     print("This file is intended to be run with pytest:")
-    print("  pytest -xvs tests/test_remote_listener.py")
+    print("  pytest -xvs pi_tv_remote/tests/test_remote_listener.py")
     print()
     print("To adjust the wait time (default is 60 seconds):")
-    print("  REMOTE_WAIT_TIME=30 pytest -xvs tests/test_remote_listener.py")
+    print(
+        "  REMOTE_WAIT_TIME=30 pytest -xvs pi_tv_remote/tests/test_remote_listener.py"
+    )
+    print()
+    print("To skip all real TV tests (when no TV is connected):")
+    print("  NO_TV=1 pytest -xvs pi_tv_remote/tests/test_remote_listener.py")
     print()
     print("Press Ctrl+C to exit the test at any time.")

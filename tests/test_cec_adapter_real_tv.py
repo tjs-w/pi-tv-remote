@@ -33,7 +33,7 @@ except ImportError:
     except ImportError:
         # Fallback for direct import
         print(
-            "CRITICAL: Unable to import pitvremote.cec_adapter. Ensure PYTHONPATH is set correctly."
+            "CRITICAL: Unable to import pi_tv_remote.cec_adapter. Ensure PYTHONPATH is set correctly."
         )
         raise
 

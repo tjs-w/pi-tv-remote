@@ -6,61 +6,82 @@ This directory contains pytest-based tests for the CECAdapter class using real T
 
 - Comprehensive tests for CEC adapter functionality
 - Works with real TV hardware via HDMI-CEC
+- Support for deployment and testing on Raspberry Pi
 - Configurable test options (skip standby, debug mode, etc.)
 - Graceful handling of environments without TV hardware
 
 ## Test Files
 
 - `test_cec_adapter_real_tv.py` - Main test file for testing the CECAdapter with a real TV
-- `test_remote_listener.py` - Test that detects button presses from a real TV remote
-- `test_cec_adapter.py` - Basic unit tests for the CECAdapter class
 - `conftest.py` - pytest configuration and fixtures
+- `run_tests.sh` - Helper script to run the tests with various options
+- `deploy_and_test_on_pi.sh` - Script to deploy and test on a Raspberry Pi
 
 ## Running the Tests
 
-### Basic Usage
+### Using the Helper Script
 
 ```bash
 # Run all tests
-pytest -v pi_tv_remote/tests/
+./run_tests.sh
 
 # Skip tests that put the TV in standby mode
-pytest -v --skip-standby pi_tv_remote/tests/
+./run_tests.sh --skip-standby
 
 # Skip all real TV tests (when no TV is connected)
-NO_TV=1 pytest -v pi_tv_remote/tests/
+./run_tests.sh --no-tv
 
-# Run specific test file
-pytest -v pi_tv_remote/tests/test_cec_adapter.py
+# Run with more verbose output
+./run_tests.sh --debug
 ```
 
-### Remote Button Detection Test
-
-This test detects button presses from a real TV remote control:
+### Using pytest Directly
 
 ```bash
-# Run the remote button detection test
-pytest -v pi_tv_remote/tests/test_remote_listener.py
+# Run all tests
+pytest -v test_cec_adapter_real_tv.py
 
-# Run with a shorter timeout (default is 60 seconds)
-REMOTE_WAIT_TIME=30 pytest -v pi_tv_remote/tests/test_remote_listener.py
+# Skip tests that put the TV in standby mode
+pytest -v --skip-standby test_cec_adapter_real_tv.py
+
+# Skip all real TV tests (when no TV is connected)
+NO_TV=1 pytest -v test_cec_adapter_real_tv.py
 ```
 
 ## Testing on a Raspberry Pi
 
-Since CEC functionality requires actual hardware, testing on a Raspberry Pi connected to a TV via HDMI is the best approach.
+Since CEC functionality requires actual hardware, testing on a Raspberry Pi connected to a TV via HDMI is the best approach. Use the provided deployment script:
+
+```bash
+# Deploy and test on a Raspberry Pi (default hostname: pi.local)
+./deploy_and_test_on_pi.sh
+
+# Deploy to a specific Raspberry Pi IP address
+./deploy_and_test_on_pi.sh 192.168.1.100
+
+# Install dependencies first (recommended for fresh setup)
+./deploy_and_test_on_pi.sh pi.local --install-deps
+
+# Skip standby tests to keep the TV on
+./deploy_and_test_on_pi.sh --skip-standby
+
+# Get more detailed test output
+./deploy_and_test_on_pi.sh --debug
+```
+
+The deployment script:
+
+1. Creates a virtual environment on the Raspberry Pi
+2. Installs required dependencies (if requested)
+3. Copies the code to the Pi
+4. Runs the tests with the specified options
 
 ### Prerequisites for Raspberry Pi
 
-- Python 3.8+ installed
+- Python 3.x installed
+- SSH access enabled
 - TV connected via HDMI cable
 - CEC enabled on the TV
-- Required libraries installed:
-
-  ```bash
-  sudo apt-get update
-  sudo apt-get install libcec-dev python3-dev build-essential
-  ```
 
 ## Test Design Principles
 
@@ -81,4 +102,3 @@ Since CEC functionality requires actual hardware, testing on a Raspberry Pi conn
 ## Environment Variables
 
 - `NO_TV` - Set this to any value to skip real TV tests
-- `REMOTE_WAIT_TIME` - Set the timeout for remote button detection (in seconds)

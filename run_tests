@@ -1,0 +1,17 @@
+#!/bin/bash
+# Wrapper script to run tests
+# This allows running tests from any directory
+set -e
+
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEST_SCRIPT="${SCRIPT_DIR}/tests/test_tools/deploy_and_test_on_pi.sh"
+
+# Check if the test script exists
+if [ ! -f "$TEST_SCRIPT" ]; then
+    echo "Error: Test script not found at $TEST_SCRIPT"
+    exit 1
+fi
+
+# Pass all arguments to the test script
+"$TEST_SCRIPT" "$@"
