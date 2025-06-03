@@ -1,1 +1,0 @@
-test_tools/deploy_and_test_on_pi.sh
