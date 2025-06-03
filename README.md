@@ -1,12 +1,13 @@
 # Pi TV Remote
 
-A Python module to interface your Raspberry Pi application (connected to a TV) with the TV remote via HDMI-CEC. This library allows your RPi app to receive and send remote control commands, enabling seamless integration of TV remote control into your own projects.
+A Python module to interface your Raspberry Pi application (connected to a TV) with the TV remote via HDMI-CEC. This library allows your RPi app to receive and send remote control commands, enabling seamless integration of TV remote control into your own projects. A command-line interface (CLI) is also available for running the adapter and seeing button events.
 
 ## Features
 
 - Receive button presses from the TV remote in your Python app
 - Send standard TV remote commands (power, volume, navigation) to the TV
 - Simple, extensible Python API for integration into your own RPi projects
+- Command-line interface (CLI) for running the adapter and observing button events
 - Real TV hardware functional testing framework
 - Designed for use on Raspberry Pi with HDMI-CEC enabled TVs
 
@@ -57,6 +58,22 @@ pip install -e ".[dev]"
 ```
 
 ## Usage
+
+### Command-Line Interface (CLI)
+
+You can run the CEC adapter and see button events directly from the command line:
+
+```bash
+python -m pi_tv_remote.cli --name "MyPi" --duration 60
+```
+
+**Options:**
+
+- `--name NAME` &nbsp;&nbsp;&nbsp;&nbsp;Set the OSD name of the device (default: RaspberryPi)
+- `--duration SECONDS` &nbsp;&nbsp;Run for a specified number of seconds (default: run indefinitely)
+- `--help` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show help message and exit
+
+This will print button events and adapter status to the console. Use this for quick diagnostics or to observe remote control events.
 
 ### Python API
 
@@ -128,6 +145,7 @@ pi_tv_remote/             # Main package directory
 ├── __init__.py           # Package initialization
 ├── cec_adapter.py        # Core CEC adapter implementation
 ├── cec_utils.py          # Utility functions for CEC
+├── cli.py                # Command-line interface
 └── tests/                # Testing directory
     ├── test_tools/       # Testing utilities (run_tests.sh, deploy_and_test_on_pi.sh)
     ├── run_tests.sh      # Test runner script (symlink to test_tools)
